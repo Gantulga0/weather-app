@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react';
+import citiesFilter from './utils/citiesFilter';
 
 function App() {
   const [countriesSearch, setcountriesSearch] = useState('');
-  const [countriesData, setcountriesData] = useState([]);
   const [filteredData, setfilteredData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [weatherData, setWeatherData] = useState(null);
-  const [cities, setcities] = useState([]);
+  const [cities, setCities] = useState([]);
 
   const fetchData = () => {
     setLoading(true);
     fetch('https://countriesnow.space/api/v0.1/countries')
       .then((response) => response.json())
       .then((result) => {
-        setcountriesData(result.data);
-        setfilteredData(result.data);
+        const countriesAndcities = citiesFilter(result.data);
+        setCities(countriesAndcities);
+        setfilteredData(countriesAndcities);
       })
       .catch((error) => {
         console.log('Error', error);
@@ -26,10 +27,9 @@ function App() {
 
   const fetchWeatherData = (city) => {
     setLoading(true);
-    const weatherApiKey =
-      'https://api.weatherapi.com/v1/forecast.json?key=${weatherApiKey}&q=${cityName}';
+
     fetch(
-      `https://api.weatherapi.com/v1/forecast.json?key=${weatherApiKey}&q=${city}`
+      `https://api.weatherapi.com/v1/forecast.json?key=YOUR_API_KEY&q=${city}`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -44,19 +44,21 @@ function App() {
   };
 
   const filterData = () => {
-    setfilteredData(
-      countriesData.filter((item) =>
-        item.country.toLowerCase().includes(countriesSearch.toLowerCase())
-      )
-    );
+    if (!countriesSearch) {
+      setfilteredData(cities);
+    } else {
+      setfilteredData(
+        cities
+          .filter((city) =>
+            city.toLowerCase().startsWith(countriesSearch.toLocaleLowerCase())
+          )
+          .slice(0, 5)
+      );
+    }
   };
 
   const handleChange = (event) => {
     setcountriesSearch(event.target.value);
-  };
-
-  const handleCityClick = (city) => {
-    fetchWeatherData(city);
   };
 
   useEffect(() => {
@@ -76,15 +78,14 @@ function App() {
 
         <input
           onChange={handleChange}
-          placeholder="Enter location"
+          placeholder="Enter city name"
           className="w-full px-4 py-2 text-lg rounded-full bg-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
         <div className="overflow-y-auto max-h-64">
-          {filteredData.map((country, index) => (
-            <div key={index} onClick={() => handleCityClick(country.country)}>
-              {country.country}
-            </div>
-          ))}
+          {countriesSearch.length > 0 &&
+            filteredData.map((country, index) => {
+              return <div key={index}>{country}</div>;
+            })}
         </div>
         {loading && <div>Loading...</div>}
         {weatherData && weatherData.location && weatherData.current && (
