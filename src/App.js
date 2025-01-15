@@ -7,6 +7,9 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [weatherData, setWeatherData] = useState(null);
   const [cities, setCities] = useState([]);
+  const [selectedCity, setselectedCity] = useState('Ulan bator');
+
+  console.log(loading);
 
   const fetchData = async () => {
     try {
@@ -15,6 +18,8 @@ function App() {
         'https://countriesnow.space/api/v0.1/countries'
       );
       const result = await response.json();
+      console.log(result);
+
       const countriesAndcities = citiesFilter(result.data);
       setCities(countriesAndcities);
       setfilteredData(countriesAndcities);
@@ -26,49 +31,45 @@ function App() {
   };
 
   const fetchWeatherData = async (city) => {
-    setLoading(true);
     try {
       const response = await fetch(
         `https://api.weatherapi.com/v1/forecast.json?key=2e426e1ecbac4ca4ae622051251501&q=${city}&days=1&aqi=yes&alerts=yes`
       );
       const data = await response.json();
       setWeatherData(data);
+      console.log(data);
     } catch (error) {
       console.log('Error', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterData = () => {
-    if (!countriesSearch) {
-      setfilteredData(cities);
-    } else {
-      setfilteredData(
-        cities
-          .filter((city) =>
-            city.toLowerCase().startsWith(countriesSearch.toLocaleLowerCase())
-          )
-          .slice(0, 5)
-      );
     }
   };
 
   const handleChange = (event) => {
     setcountriesSearch(event.target.value);
+    setfilteredData(
+      cities
+        .filter((city) =>
+          city.toLowerCase().startsWith(event.target.value.toLocaleLowerCase())
+        )
+        .slice(0, 5)
+    );
   };
 
-  useEffect(() => {
-    filterData();
-  }, [countriesSearch]);
+  const handleCityClick = (city) => {
+    setcountriesSearch(city);
+    setselectedCity(city);
+    fetchWeatherData(city);
+  };
 
   useEffect(() => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    fetchWeatherData('Ulan bator');
+  }, [selectedCity]);
+
   return (
     <div className="min-h-screen flex items-center justify-center relative">
-      {loading && <div>loading</div>}
       <section className="flex flex-1 relative items-center justify-center w-1/2 h-screen">
         <div className="flex relative w-[414px] h-[828px] justify-center z-10">
           <div className="z-20 w-full h-5/6 rounded-[10.5px] overflow-hidden shadow-lg bg-white/75">
@@ -80,23 +81,41 @@ function App() {
                 />
               </div>
             </div>
-            <div className="px-12"></div>
+            <div className="px-12">
+              {weatherData && (
+                <div className="text-black">
+                  <p>{weatherData.forecast.forecastday[0].date}</p>
+                  <h2 className="text-3xl font-bold">
+                    {weatherData.location.name}
+                  </h2>
+                  <p>{weatherData.current.condition.text}</p>
+                  <p>{weatherData.forecast.forecastday[0].day.maxtemp_c}°C</p>
+                </div>
+              )}
+            </div>
           </div>
           <div></div>
         </div>
       </section>
-      <div className="absolute w-full z-30 top-0 left-0 flex items-center justify-center h-full">
+      <div className="absolute w-full z-30  flex items-center justify-center h-full">
         <input
+          disabled={loading}
           type="text"
           onChange={handleChange}
+          value={countriesSearch}
           placeholder="Search"
           className="px-4 py-2 w-60 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
+        {loading && <div className="text-red">loading</div>}
         <div className="absolute top-[600px] mt-2 w-60 bg-white border-gray-300 rounded-md shadow-lg max-h-64 overflow-y-auto">
           {countriesSearch.length > 0 &&
             filteredData.map((country, index) => {
               return (
-                <div key={index} className="px-4 py-2 hover:bg-gray-100">
+                <div
+                  key={index}
+                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  onClick={() => handleCityClick(country)}
+                >
                   {country}
                 </div>
               );
@@ -115,7 +134,18 @@ function App() {
                 />
               </div>
             </div>
-            <div className="px-12"></div>
+            <div className="px-12">
+              {weatherData && (
+                <div className="text-white">
+                  <p>{weatherData.forecast.forecastday[0].date}</p>
+                  <h2 className="text-3xl font-bold">
+                    {weatherData.location.name}
+                  </h2>
+                  <p>{weatherData.current.condition.text}</p>
+                  <p>{weatherData.forecast.forecastday[0].day.mintemp_c}°C</p>
+                </div>
+              )}
+            </div>
           </div>
           <div></div>
         </div>
