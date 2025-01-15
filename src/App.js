@@ -8,39 +8,36 @@ function App() {
   const [weatherData, setWeatherData] = useState(null);
   const [cities, setCities] = useState([]);
 
-  const fetchData = () => {
-    setLoading(true);
-    fetch('https://countriesnow.space/api/v0.1/countries')
-      .then((response) => response.json())
-      .then((result) => {
-        const countriesAndcities = citiesFilter(result.data);
-        setCities(countriesAndcities);
-        setfilteredData(countriesAndcities);
-      })
-      .catch((error) => {
-        console.log('Error', error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        'https://countriesnow.space/api/v0.1/countries'
+      );
+      const result = await response.json();
+      const countriesAndcities = citiesFilter(result.data);
+      setCities(countriesAndcities);
+      setfilteredData(countriesAndcities);
+    } catch (error) {
+      console.log('Error', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const fetchWeatherData = (city) => {
+  const fetchWeatherData = async (city) => {
     setLoading(true);
-
-    fetch(
-      `https://api.weatherapi.com/v1/forecast.json?key=YOUR_API_KEY&q=${city}`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        setWeatherData(data);
-      })
-      .catch((error) => {
-        console.log('Error', error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      const response = await fetch(
+        `https://api.weatherapi.com/v1/forecast.json?key=2e426e1ecbac4ca4ae622051251501&q=${city}&days=1&aqi=yes&alerts=yes`
+      );
+      const data = await response.json();
+      setWeatherData(data);
+    } catch (error) {
+      console.log('Error', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const filterData = () => {
@@ -71,6 +68,7 @@ function App() {
 
   return (
     <div className="min-h-screen flex items-center justify-center relative">
+      {loading && <div>loading</div>}
       <section className="flex flex-1 relative items-center justify-center w-1/2 h-screen">
         <div className="flex relative w-[414px] h-[828px] justify-center z-10">
           <div className="z-20 w-full h-5/6 rounded-[10.5px] overflow-hidden shadow-lg bg-white/75">
@@ -94,6 +92,16 @@ function App() {
           placeholder="Search"
           className="px-4 py-2 w-60 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
+        <div className="absolute top-[600px] mt-2 w-60 bg-white border-gray-300 rounded-md shadow-lg max-h-64 overflow-y-auto">
+          {countriesSearch.length > 0 &&
+            filteredData.map((country, index) => {
+              return (
+                <div key={index} className="px-4 py-2 hover:bg-gray-100">
+                  {country}
+                </div>
+              );
+            })}
+        </div>
       </div>
       <section className="flex flex-1 relative items-center justify-center w-1/2 h-screen bg-[rgb(15,20,30)]">
         <div className="flex relative w-[414px] h-[828px] justify-center z-10">
