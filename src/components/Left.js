@@ -86,7 +86,7 @@ const Left = ({
                   </div>
                   <div className="px-10">
                     <p className="text-transparent bg-clip-text font-extrabold text-[90px] bg-gradient-to-b from-black to-white">
-                      {weatherData.forecast?.forecastday[0]?.day.maxtemp_c}°C
+                      {weatherData.forecast?.forecastday[0]?.day.mintemp_c}°C
                     </p>
                     <p className="font-extrabold mb-12 h-6 text-yellow-200">
                       {weatherData.current?.condition?.text}
