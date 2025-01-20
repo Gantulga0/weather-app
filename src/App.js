@@ -3,6 +3,7 @@ import citiesFilter from './utils/citiesFilter';
 import Right from './components/Right';
 import Left from './components/Left';
 import Input from './components/Input';
+import Svg from './components/Svg';
 
 function App() {
   const [countriesSearch, setcountriesSearch] = useState('');
@@ -74,6 +75,7 @@ function App() {
 
   return (
     <div className="min-h-screen flex items-center justify-center relative">
+      <Svg />
       <Right
         weatherLoading={weatherLoading}
         weatherData={weatherData}

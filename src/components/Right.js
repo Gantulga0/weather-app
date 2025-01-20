@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import Svg from './Svg';
 
 const weatherImages = {
   Sunny:
@@ -58,9 +57,8 @@ const Right = ({
 
   return (
     <section className="flex flex-1 relative items-center justify-center w-1/2 h-screen">
-      <Svg />
       <div className="flex relative w-[414px] h-[828px] justify-center z-10 ">
-        <div className="z-20 w-full h-5/6 z-20 rounded-[10.5px] overflow-hidden shadow-lg bg-white/75 backdrop-blur-xl">
+        <div className="z-20 w-full h-5/6 z-20 rounded-[10.5px] overflow-hidden shadow-lg bg-white/75 backdrop-blur-m">
           {weatherLoading ? (
             <div className="text-black flex justify-center items-center h-full">
               <p>Loading weather data...</p>

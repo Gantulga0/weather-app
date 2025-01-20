@@ -56,9 +56,9 @@ const Left = ({
   };
 
   return (
-    <section className="flex flex-1 relative items-center justify-center w-1/2 h-screen bg-[rgb(15,20,30)]">
+    <section className="flex flex-1 relative items-center justify-center w-1/2 h-screen bg-[rgb(15,20,30)] z-1">
       <div className="flex relative w-[414px] h-[828px] justify-center z-10">
-        <div className="z-20 w-full h-5/6 rounded-[10.5px] overflow-hidden shadow-lg bg-[#111827]/75 backdrop-blur-xl">
+        <div className="z-20 w-full h-5/6 rounded-[10.5px] overflow-hidden shadow-lg bg-[#111827]/75 backdrop-blur-m">
           <div>
             {weatherLoading ? (
               <div className="text-white flex justify-center items-center h-full">
