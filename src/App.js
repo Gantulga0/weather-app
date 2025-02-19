@@ -18,9 +18,7 @@ function App() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        'https://countriesnow.space/api/v0.1/countries'
-      );
+      const response = await fetch(`${process.env.COUNTRY_SNOW}/countries`);
       const result = await response.json();
       console.log(result);
 
@@ -38,7 +36,7 @@ function App() {
     setWeatherLoading(true);
     try {
       const response = await fetch(
-        `https://api.weatherapi.com/v1/forecast.json?key=2e426e1ecbac4ca4ae622051251501&q=${city}&days=1&aqi=yes&alerts=yes`
+        `${process.env.WEATHER_API}/forecast.json?key=2e426e1ecbac4ca4ae622051251501&q=${city}&days=1&aqi=yes&alerts=yes`
       );
       const data = await response.json();
       setWeatherData(data);
